@@ -147,9 +147,9 @@ def show_ngram_stat(ngram_dic):
         elif cnt > int(tot*0.75) and q[2]==0:
             print("Q3: {}".format(str(t)))
             q[2] = 1
+            thresh = t
         elif cnt > int(tot*0.97):
             print("97%: {}".format(str(t)))
-            thresh=t
             break
         cnt += t
     print("Max: {}".format(str(sorted_dic[0][1])))
