@@ -136,7 +136,6 @@ def show_ngram_stat(ngram_dic):
     for i, t in name_erased:
         tot += t
     cnt = 0
-    thresh = 0
     q = [0,0,0]
     for i, t in name_erased:
         if cnt > int(tot*0.25) and q[0]==0:
@@ -147,10 +146,10 @@ def show_ngram_stat(ngram_dic):
             q[1] = 1
         elif cnt > int(tot*0.75) and q[2]==0:
             print("Q3: {}".format(str(t)))
-            thresh = t
             q[2] = 1
         elif cnt > int(tot*0.97):
             print("97%: {}".format(str(t)))
+            thresh=t
             break
         cnt += t
     print("Max: {}".format(str(sorted_dic[0][1])))
@@ -172,7 +171,7 @@ def check_ratio(ngram_dic):
     print("==================\n\n")
 
 if __name__ == "__main__":
-    test_num = 10000
+    test_num = 1000
     one_gram = CodeNgram(depth=1)
     with open(test_data, 'r') as file:
         print("Start on One Gram...")
@@ -214,3 +213,4 @@ if __name__ == "__main__":
     with open('./bigram.json', 'w') as jsonfile:
         temp = json.dumps(bigram.__repr__())
         jsonfile.write(temp)
+
