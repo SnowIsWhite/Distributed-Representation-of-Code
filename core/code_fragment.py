@@ -120,8 +120,7 @@ def break_into_fragments(ast, depth, ngram_dic=None):
             for p in permute:
                 if not any(p): continue
                 temp_tree = deepcopy(tree)
-                tree2 = __get_appended_tree(i, tree, list(p), ast, to_traverse)
-                tree = deepcopy(temp_tree)
+                tree2 = __get_appended_tree(i, temp_tree, list(p), ast, to_traverse)
                 # stringify tree
                 fragments.append(tree_to_string(tree2))
     return fragments
