@@ -4,6 +4,8 @@
 import json
 import ast
 import Queue
+import itertools
+from copy import deepcopy
 from utility import read_unigram, read_bigram, tree_to_string
 from utility import read_bigram_score
 
@@ -54,24 +56,27 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
     global UNSEEN
     global THRESH
     sentence = []
+    print(target)
     vis = [0] * len(target)
-    q = Queue.Queue()
-    q.put(0)
-    while not q.empty():
-        i = q.get_nowait()
-        if vis[i] == 1: continue
+    stack = []
+    stack.append(0)
+    while len(stack)!=0:
+        i = stack.pop()
         if 'children' not in target[i]:
             vis[i] = 1    
             continue
-        for child in target[i]['children']: q.put(child)
+        for child in reversed(target[i]['children']): stack.append(child)
+        if vis[i] == 1: continue
         # search bigram
         tree = Tree(name=target[i]['type'])
         for child in target[i]['children']:
             tree.add_child(Tree(name=target[child]['type']))
-        if tree_to_string(tree) not in unigram:
+        str_tree = tree_to_string(tree)
+        if str_tree not in unigram:
             sentence.append(UNSEEN)
             vis[i] = 1
             continue
+
         # depth 2 tree
         to_traverse = []
         for child in target[i]['children']:
@@ -82,29 +87,52 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
                 if tree_to_string(subtree) not in unigram:
                     continue
                 to_traverse.append(child)
+
         # depth 2 tree doesn't exist
-        if len(to_travesre) == 0:
+        if len(to_traverse) == 0:
             # color unigram
             vis[i] = 1
-            sentence.append(tree)
+            sentence.append(str_tree)
             continue
+
         # get all bigrams
         num_nodes = len(to_traverse)
+        max_score = 0
         while num_nodes > 0:
-            tmp_tree = deepcopy(tree)
-            bi_tree = __get_appended_tree()
-            str_bi_tree = tree_to_string(bi_tree)
-            if str_bi_tree in bigram_score:
-                if bigram_score[str_bi_tree] >= THRESH:
-                     
-        
-    # if there exists color it
-    # search unigram
+            # get appended tree, changed vis index
+            if num_nodes == len(to_traverse):
+                permute = [tuple(to_traverse)]
+            else:
+                permute = itertools.permutations(to_traverse, num_nodes)
+            for tup in permute:
+                tmp_vis = [v for v in vis]
+                tmp_tree = deepcopy(tree)
+                tmp_vis[i] = 1
+                for child in tup:
+                    for idx, c in enumerate(target[i]['children']):
+                        if c == child:
+                            tmp_vis[c] = 1
+                            for grand in target[child]['children']:
+                                tmp_tree.children[idx].add_child(Tree(name=target[grand][
+'type']))
+                str_bi_tree = tree_to_string(tmp_tree)
+                if bigram_score[str_bi_tree] > max_score:
+                    max_score = bigram_score[str_bi_tree]
+                    final_vis = [v for v in tmp_vis]
+                    tmp_str_bi_tree = str_bi_tree
+            num_nodes -= 1
+        # final check
+        if max_score > THRESH:
+            vis = [v for v in final_vis]
+            sentence.append(tmp_str_bi_tree)
+        else:
+            vis[i] = 1
+            sentence.append(str_tree)                   
     return
 
 if __name__ == "__main__":
-    test_num = 10000
-    selector = 0
+    test_num = 1
+    selector = 1
     # 0: unigram, 1: bigram
     bigram = read_bigram()
     unigram = read_unigram()
