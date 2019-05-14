@@ -13,7 +13,7 @@ result_path = './tokenized_data.json'
 result_path_bigram = './tokenized_data_bigram.json'
 data_path = './python100k_train_function.json'
 UNSEEN = 'UNK'
-THRESH = 0.27
+THRESH = 0.0089
 class Tree:
     def __init__(self, name='root', children=None):
         self.name = name
@@ -97,6 +97,10 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
         # get all bigrams
         num_nodes = len(to_traverse)
         max_score = 0
+        save_tree = []
+        save_score = []
+        save_vis = []
+        save_child_num = []
         while num_nodes > 0:
             # get appended tree, changed vis index
             if num_nodes == len(to_traverse):
@@ -115,16 +119,35 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
                                 tmp_tree.children[idx].add_child(Tree(name=target[grand][
 'type']))
                 str_bi_tree = tree_to_string(tmp_tree)
+                
                 if str_bi_tree not in bigram: continue
+                if str_bi_tree in save_tree: continue
+                save_tree.append(str_bi_tree)
+                save_score.append(bigram_score[str_bi_tree])
+                save_vis.append(tmp_vis)
+                save_child_num.append(num_nodes)
                 if bigram_score[str_bi_tree] > max_score:
                     max_score = bigram_score[str_bi_tree]
-                    final_vis = [v for v in tmp_vis]
-                    tmp_str_bi_tree = str_bi_tree
             num_nodes -= 1
         # final check
         if max_score > THRESH:
-            vis = [v for v in final_vis]
-            sentence.append(tmp_str_bi_tree)
+            target_idx = []
+            # get all indicies of max score
+            for ii, score in enumerate(save_score):
+                if score == max_score:
+                    target_idx.append(ii)
+            target_min = []
+            mini = 99999
+            # get minium node value among them
+            for ii in target_idx:
+                if save_child_num[ii] < mini:
+                    mini = save_child_num[ii]
+            # get final index which has min node, and leftmost and max score
+            for ii in target_idx:
+                if save_child_num[ii] == mini:
+                    real_target = ii
+            vis = save_vis[real_target]
+            sentence.append(save_tree[real_target])
         else:
             vis[i] = 1
             sentence.append(str_tree)                   
@@ -141,7 +164,7 @@ if __name__ == "__main__":
     with open(data_path, 'r') as f:
         for idx, line in enumerate(f.readlines()):
             if idx > test_num: break
-            if idx % 1000 == 0: print("test num : {}".format(str(idx)))
+            if idx % 100 == 0: print("test num : {}".format(str(idx)))
             line = ast.literal_eval(line)
             if selector == 0:
                 res = tokenize_unigram(unigram, line)
