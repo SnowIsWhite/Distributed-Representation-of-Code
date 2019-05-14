@@ -3,6 +3,7 @@ import Queue
 import itertools
 import operator
 import ast as ast_lib
+import datetime
 from copy import deepcopy
 
 #train_data_dir = '/Users/jaeickbae/Documents/research/program_synthesis/python150/py150/python100k_train.json'
@@ -146,9 +147,9 @@ def show_ngram_stat(ngram_dic):
         elif cnt > int(tot*0.75) and q[2]==0:
             print("Q3: {}".format(str(t)))
             q[2] = 1
-            thresh = t
         elif cnt > int(tot*0.97):
             print("97%: {}".format(str(t)))
+            thresh = t
             break
         cnt += t
     print("Max: {}".format(str(sorted_dic[0][1])))
@@ -170,7 +171,7 @@ def check_ratio(ngram_dic):
     print("==================\n\n")
 
 if __name__ == "__main__":
-    test_num = 1000
+    test_num = 100000
     one_gram = CodeNgram(depth=1)
     with open(test_data, 'r') as file:
         print("Start on One Gram...")
@@ -195,6 +196,8 @@ if __name__ == "__main__":
 
     # bigram
     print("Start bigram...")
+    start = datetime.datetime.now()
+    print(start)
     bigram = CodeNgram(depth=2)
     for idx, line in enumerate(raw_data):
         if idx > test_num:
@@ -212,4 +215,6 @@ if __name__ == "__main__":
     with open('./bigram.json', 'w') as jsonfile:
         temp = json.dumps(bigram.__repr__())
         jsonfile.write(temp)
+    end = datetime.datetime.now()
+    print(end-start)
 
