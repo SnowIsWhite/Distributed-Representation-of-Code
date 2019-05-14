@@ -57,7 +57,7 @@ def tree_to_string(tree):
     string_tree = json.dumps(string_tree)
     return string_tree
 
-def __build_tree(ast, el):
+def __build_tree(data, el):
     node = Tree(name=el['type'])
     if 'value' in el:
         node.add_value(el['value'])
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         for line in f.readlines():
             if len(line)!= 0:
                 progress = int(line)
-    with open('/Users/jaeickbae/Documents/research/program_synthesis/python150/py150/python100k_train.json', 'r') as f:
+    with open('../python150/py150/python100k_train.json', 'r') as f:
         for idx, line in enumerate(f.readlines()):
             if idx < progress:
                 continue

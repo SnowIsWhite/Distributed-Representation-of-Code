@@ -4,6 +4,7 @@ import json
 import ast
 import Queue
 import itertools
+import datetime
 from copy import deepcopy
 
 unigram_file_path = './one_gram.json'
@@ -162,17 +163,21 @@ def cleaning(unigram, bigram, ast_tree):
             num_nodes -= 1
 
 if __name__ == "__main__":
-    test_num = 1000
+    test_num = 100000
     unigram, bigram = read_dictionary()
     print("Cleaning Starts...")
+    start = datetime.datetime.now()
+    print(start)
     with open(train_file_path, 'r') as f:
         raw_data = f.readlines()
         for idx, line in enumerate(raw_data):
             if idx > test_num:
                 break
-            if idx % 10 == 0:
+            if idx % 10000 == 0:
                 print("{} function cleaned".format(str(idx)))
             ast_tree = ast.literal_eval(line)
             cleaning(unigram, bigram, ast_tree)
     print(tot_delete)
     replace_dictionary(bigram)
+    end = datetime.datetime.now()
+    print(start-end)

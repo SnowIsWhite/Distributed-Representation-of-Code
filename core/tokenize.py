@@ -5,6 +5,7 @@ import json
 import ast
 import Queue
 import itertools
+import datetime
 from copy import deepcopy
 from utility import read_unigram, read_bigram, tree_to_string
 from utility import read_bigram_score
@@ -13,7 +14,7 @@ result_path = './tokenized_data.json'
 result_path_bigram = './tokenized_data_bigram.json'
 data_path = './python100k_train_function.json'
 UNSEEN = 'UNK'
-THRESH = 0.0089
+THRESH = 0.0000242
 class Tree:
     def __init__(self, name='root', children=None):
         self.name = name
@@ -154,17 +155,21 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
     return sentence
 
 if __name__ == "__main__":
-    test_num = 1000
+    test_num = 10000
     selector = 1
     # 0: unigram, 1: bigram
     bigram = read_bigram()
     unigram = read_unigram()
     bigram_score = read_bigram_score()  
     result = []
+    start = datetime.datetime.now()
+    print(start)
     with open(data_path, 'r') as f:
         for idx, line in enumerate(f.readlines()):
             if idx > test_num: break
-            if idx % 100 == 0: print("test num : {}".format(str(idx)))
+            if idx % 1000 == 0: 
+                print("test num : {}".format(str(idx)))
+                print(datetime.datetime.now())
             line = ast.literal_eval(line)
             if selector == 0:
                 res = tokenize_unigram(unigram, line)
@@ -172,4 +177,5 @@ if __name__ == "__main__":
                 res = tokenize_bigram(bigram, bigram_score, unigram, line)
             result.append(res)
     write_data(result, selector)
-            
+    end = datetime.datetime.now()
+    print("total time elapsed: {}",format(str(start-end)))

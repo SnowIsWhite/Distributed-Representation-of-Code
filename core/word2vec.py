@@ -2,7 +2,7 @@ import os
 import json
 import ast
 import gensim, logging
-
+import matplotlib.pyplot as plt
 from gensim.models.callbacks import CallbackAny2Vec
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -31,7 +31,7 @@ with open(trees_path, 'r') as f:
     lines = f.readline()
 sentences = ast.literal_eval(lines)
 c = callback()
-model = gensim.models.Word2Vec(sentences=sentences, window=3, workers=4, sg=1, iter=1000, compute_loss=True, callbacks=[c])
+model = gensim.models.Word2Vec(sentences=sentences, window=3, workers=4, sg=1, iter=100, compute_loss=True, callbacks=[c])
 model.wv.save(wv_path)
 
 with open('./misc/train_loss.txt', 'w') as f:

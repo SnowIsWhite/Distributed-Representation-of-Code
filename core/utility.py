@@ -20,7 +20,7 @@ def read_bigram_score():
     with open(bigram_score_path, 'r') as f:
         line = f.readline()
         bigram_score = ast.literal_eval(line)
-    return bgiram_score
+    return bigram_score
 
 def tree_to_string(tree):
     stack = []
@@ -50,4 +50,6 @@ def tree_to_string(tree):
     string_tree = json.dumps(string_tree)
     return string_tree
 
-
+if __name__ == "__main__":
+    bi = read_bigram()
+    print(len(bi))
