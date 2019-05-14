@@ -70,7 +70,7 @@ def print_statistics(bigram_score):
     return
 
 if __name__ == "__main__":
-    test_num = 1000
+    test_num = 100000
     bigram = read_bigram()
     unigram = read_unigram()
     bigram_score = {}
@@ -78,6 +78,8 @@ if __name__ == "__main__":
     for idx, bi_tree in enumerate(bigram):
         if idx > test_num:
             break
+        if idx % 10000 == 0: 
+            print("{} function done".format(str(idx)))
         uni_cnt = get_unigram_cnt(bi_tree, unigram)
         bigram_score[bi_tree] = calculate_score(bigram[bi_tree], uni_cnt)
     
