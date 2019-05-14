@@ -56,7 +56,6 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
     global UNSEEN
     global THRESH
     sentence = []
-    print(target)
     vis = [0] * len(target)
     stack = []
     stack.append(0)
@@ -116,6 +115,7 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
                                 tmp_tree.children[idx].add_child(Tree(name=target[grand][
 'type']))
                 str_bi_tree = tree_to_string(tmp_tree)
+                if str_bi_tree not in bigram: continue
                 if bigram_score[str_bi_tree] > max_score:
                     max_score = bigram_score[str_bi_tree]
                     final_vis = [v for v in tmp_vis]
@@ -131,7 +131,7 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
     return
 
 if __name__ == "__main__":
-    test_num = 1
+    test_num = 1000
     selector = 1
     # 0: unigram, 1: bigram
     bigram = read_bigram()
