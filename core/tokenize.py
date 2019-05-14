@@ -128,7 +128,7 @@ def tokenize_bigram(bigram, bigram_score, unigram, target):
         else:
             vis[i] = 1
             sentence.append(str_tree)                   
-    return
+    return sentence
 
 if __name__ == "__main__":
     test_num = 1000
