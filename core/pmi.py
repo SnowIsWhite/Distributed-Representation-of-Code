@@ -40,7 +40,10 @@ def get_unigram_cnt(bi_tree, unigram):
 
 def calculate_score(bi_cnt, uni_cnt):
     # return score
-    score = bi_cnt/(sum(uni_cnt)*1.)
+    prod = 1
+    for c in uni_cnt:
+        prod = prod * c
+    score = bi_cnt/(prod*1.)
     return score
 
 def print_statistics(bigram_score):
