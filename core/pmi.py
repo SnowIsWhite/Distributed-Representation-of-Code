@@ -50,23 +50,19 @@ def print_statistics(bigram_score):
     print("\n\n========STAT========\n")
     # avg, min, max, q1, q2, q3
     sorted_score = sorted(bigram_score.items(), key=operator.itemgetter(1), reverse=True)
-    total = 0
-    for i, t in sorted_score:
-        total += t
+    total = len(sorted_score)
     print("Average: {}\n".format(str(total/(len(sorted_score)*1.))))
-    cnt = 0
     q = [0,0,0]
     for i, t in sorted_score:
-        if cnt > int(total*0.25) and q[0]==0:
+        if i >= int(total*0.25) and q[0]==0:
             print("Q1: {}".format(str(t)))
             q[0] = 1
-        elif cnt > int(total*0.5) and q[1]==0:
+        elif i >= int(total*0.5) and q[1]==0:
             print("Q2: {}".format(str(t)))
             q[1] = 1
-        elif cnt > int(total*0.75) and q[2]==0:
+        elif i >= int(total*0.75) and q[2]==0:
             print("Q3: {}".format(str(t)))
             break
-        cnt += t
     print("Max: {}".format(str(sorted_score[0][1])))
     print("Min: {}".format(str(sorted_score[-1][1])))
     print("===========================\n\n")
